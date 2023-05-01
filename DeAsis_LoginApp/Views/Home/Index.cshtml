@@ -2,7 +2,38 @@
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+@model List<Territory>
+
+<ul>
+    @foreach (var territory in Model)
+    {
+        
+        <li>
+            
+            <span>@territory.Name</span>
+            @if (territory.Children.Any())
+            {
+                <button class="toggle-children btn" data-toggle="collapse" data-target="#@territory.Id">
+                    &#9660;
+                </button>
+                <div class="children" style="display:none">
+                    @await Html.PartialAsync("_Territory", territory.Children)
+                </div>
+            }
+        </li>
+    }
+</ul>
+
+@section scripts {
+    <script>
+        $(document).ready(function () {
+            $('.toggle-children').click(function () {
+                $(this).toggleClass('open');
+                $(this).next('.children').slideToggle();
+            });
+        });
+    </script>
+}
+
+
+

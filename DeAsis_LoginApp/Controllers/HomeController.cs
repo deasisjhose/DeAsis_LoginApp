@@ -31,11 +31,39 @@ namespace DeAsis_LoginApp.Controllers
                     var territories = jsonArray.Territories;
 
 
+                    // Arrange the territories based on the correlation between the fields "id" and "parent"
+                    var territoryDictionary = new Dictionary<string, Territory>();
+                    foreach (var territory in territories)
+                    {
+                        territoryDictionary.Add(territory.Id, territory);
+                    }
+
+                    var arrangedTerritories = new List<Territory>();
+                    foreach (var territory in territories)
+                    {
+                        if (territory.Parent != null && territoryDictionary.ContainsKey(territory.Parent))
+                        {
+                            var parent = territoryDictionary[territory.Parent];
+                            parent.Children.Add(territory);
+                        }
+                        else
+                        {
+                            arrangedTerritories.Add(territory);
+                        }
+                    }
+
+                    //Sort arranged
+                    var sortedTerritories = arrangedTerritories.OrderBy(t => t.Id).ToList();
+
+
                     // Do something with the territories
-                    Console.WriteLine(territories[0].Name);
+                    foreach(var territory in sortedTerritories)
+                    {
+                        Console.WriteLine(territory.Id); 
+                    }
 
 
-                    return View();
+                    return View(sortedTerritories);
                 }
                 else
                 {

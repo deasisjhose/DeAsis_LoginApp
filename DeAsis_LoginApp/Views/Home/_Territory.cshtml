@@ -1,0 +1,19 @@
+﻿@model List<Territory>
+
+<ul>
+    @foreach (var territory in Model)
+    {
+            <li>
+                <span>@territory.Name</span>
+            @if (territory.Children.Any())
+            {
+                <button class="toggle-children btn" data-toggle="collapse" data-target="#@territory.Id">
+                    &#9656;
+                </button>
+                <div class="children" style="display:none">
+                    @await Html.PartialAsync("_Territory", territory.Children)
+                </div>
+            }
+            </li>
+    }
+</ul>
