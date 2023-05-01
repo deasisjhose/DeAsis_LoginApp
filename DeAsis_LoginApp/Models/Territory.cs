@@ -2,8 +2,14 @@
 {
     public class Territory 
     {
-        public int id { get; set; }
-        public string name { get; set; }
-        public int parent { get; set; }
+        public string Id { get; set; }
+        public string Name { get; set; }
+        public string? Parent { get; set; }
+        public List<Territory> Children { get; set; }
+
+        public Territory()
+        {
+            Children = new List<Territory>();
+        }
     }
 }

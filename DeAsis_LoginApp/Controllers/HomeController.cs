@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using System.Diagnostics;
+using System.Text.Json.Nodes;
 
 namespace DeAsis_LoginApp.Controllers
 {
@@ -26,12 +27,14 @@ namespace DeAsis_LoginApp.Controllers
                 {
                     var content = await response.Content.ReadAsStringAsync();
 
-                    var territoriesWrapper = JsonConvert.DeserializeObject<TerritoriesWrapper>(content);
-                    var territories = territoriesWrapper.Data.ToList();
-                   
+                    var jsonArray = JsonConvert.DeserializeObject<TerritoriesWrapper>(content);
+                    var territories = jsonArray.Territories;
 
-                    Console.WriteLine(content.ToString()); 
+
                     // Do something with the territories
+                    Console.WriteLine(territories[0].Name);
+
+
                     return View();
                 }
                 else
@@ -40,17 +43,19 @@ namespace DeAsis_LoginApp.Controllers
                     return View();
                 }
             }
-                
-            
-        }
 
+
+        }
 
         public class TerritoriesWrapper
         {
-            public Territory[] Data { get; set; }
+           public TerritoriesWrapper()
+            {
+                Territories = new List<Territory>(); 
+            }
+            [JsonProperty("data")]
+            public List<Territory> Territories { get; set; }
         }
-
-
-    }
+    }    
 
 }
