@@ -52,6 +52,7 @@ namespace DeAsis_LoginApp.Controllers
                     var identity = new ClaimsIdentity(CookieAuthenticationDefaults.AuthenticationScheme);
                     identity.AddClaim(new Claim(ClaimTypes.Name, model.Username));
 
+                    Console.WriteLine(identity.Name); 
                     // Sign in the user
                     await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(identity));
 
