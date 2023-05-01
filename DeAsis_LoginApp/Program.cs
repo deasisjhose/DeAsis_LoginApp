@@ -1,3 +1,5 @@
+using Microsoft.AspNetCore.Authentication.Cookies;
+
 namespace DeAsis_LoginApp
 {
     public class Program
@@ -8,6 +10,16 @@ namespace DeAsis_LoginApp
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
+            builder.Services.AddHttpClient();
+            builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+            .AddCookie(options =>
+            {
+                options.Cookie.HttpOnly = true;
+                options.ExpireTimeSpan = TimeSpan.FromMinutes(80);
+                options.LoginPath = "/Account/Login";
+               // options.AccessDeniedPath = "/Account/AccessDenied";
+                options.SlidingExpiration = true;
+            });
 
             var app = builder.Build();
 
@@ -23,12 +35,17 @@ namespace DeAsis_LoginApp
             app.UseStaticFiles();
 
             app.UseRouting();
-
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.MapControllerRoute(
                 name: "default",
+                pattern: "{controller=Account}/{action=Login}/{id?}");
+
+            app.MapControllerRoute(
+             name: "home",
                 pattern: "{controller=Home}/{action=Index}/{id?}");
+        
 
             app.Run();
         }
