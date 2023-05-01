@@ -1,24 +1,24 @@
-#See https://aka.ms/containerfastmode to understand how Visual Studio uses this Dockerfile to build your images for faster debugging.
-
-#Depending on the operating system of the host machines(s) that will build or run the containers, the image specified in the FROM statement may need to be changed.
-#For more information, please see https://aka.ms/containercompat
-
+# Use an official .NET runtime as a parent image
 FROM mcr.microsoft.com/dotnet/aspnet:7.0 AS base
 WORKDIR /app
 EXPOSE 80
-EXPOSE 443
 
+# Copy csproj and restore as distinct layers
 FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
 WORKDIR /src
 COPY ["DeAsis_LoginApp/DeAsis_LoginApp.csproj", "DeAsis_LoginApp/"]
 RUN dotnet restore "DeAsis_LoginApp/DeAsis_LoginApp.csproj"
+
+# Copy everything else and build
 COPY . .
 WORKDIR "/src/DeAsis_LoginApp"
 RUN dotnet build "DeAsis_LoginApp.csproj" -c Release -o /app/build
 
+# Publish
 FROM build AS publish
 RUN dotnet publish "DeAsis_LoginApp.csproj" -c Release -o /app/publish /p:UseAppHost=false
 
+# Create a final image
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
